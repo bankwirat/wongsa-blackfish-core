@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+
+# Specification File Reference
+
+Always read and reference the file `specs/core.yaml` as the specification document for this project.
+
+Before making any code changes or answering questions about the project architecture:
+1. First read the specification file at `specs/core.yaml`
+2. Ensure your responses and code align with the specifications defined in that file
+3. If there's any conflict between the spec and the current request, point out the discrepancy
+
+The specification file should be treated as the source of truth for:
+- Project architecture
+- Design patterns
+- Coding standards
+- API contracts
+- Business logic rules
+
+When writing code, always verify it matches the specifications in `specs/core.yaml`.

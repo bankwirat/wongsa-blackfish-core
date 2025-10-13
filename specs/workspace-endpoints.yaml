@@ -1,0 +1,528 @@
+openapi: 3.0.3
+info:
+  title: Workspace Management API
+  description: API endpoints for managing workspace settings and operations
+  version: 1.0.0
+  contact:
+    name: Wongsa Core API
+    email: support@wongsa.com
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+
+security:
+  - bearerAuth: []
+
+paths:
+  /workspaces:
+    get:
+      tags:
+        - Workspaces
+      summary: Get all workspaces for authenticated user
+      description: Retrieve all workspaces where the user is a member
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of workspaces
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Workspace'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Workspaces
+      summary: Create a new workspace
+      description: Create a new workspace and add the creator as owner
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWorkspaceRequest'
+      responses:
+        '201':
+          description: Workspace created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '409':
+          description: Workspace with this slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /workspaces/{id}:
+    get:
+      tags:
+        - Workspaces
+      summary: Get workspace by ID
+      description: Retrieve a specific workspace by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workspace details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User is not a member of this workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      tags:
+        - Workspaces
+      summary: Update workspace
+      description: Update workspace settings (requires owner or admin role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateWorkspaceRequest'
+      responses:
+        '200':
+          description: Workspace updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not have permission to update this workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Workspace slug already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags:
+        - Workspaces
+      summary: Delete workspace
+      description: Delete a workspace (requires owner role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Workspace deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Workspace deleted successfully"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not have permission to delete this workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /workspaces/{id}/members:
+    get:
+      tags:
+        - Workspace Members
+      summary: Get workspace members
+      description: Get all members of a workspace
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of workspace members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceMember'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User is not a member of this workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      tags:
+        - Workspace Members
+      summary: Add member to workspace
+      description: Add a user to a workspace by email
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemberRequest'
+      responses:
+        '201':
+          description: Member added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceMember'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not have permission to add members
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace or user not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: User is already a member of this workspace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /workspaces/{id}/members/{memberId}:
+    delete:
+      tags:
+        - Workspace Members
+      summary: Remove member from workspace
+      description: Remove a member from a workspace
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Workspace ID
+          schema:
+            type: string
+        - name: memberId
+          in: path
+          required: true
+          description: Member ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Member removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Member removed successfully"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not have permission to remove members
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Workspace or member not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique workspace identifier
+          example: "clx1234567890abcdef"
+        name:
+          type: string
+          description: Workspace name
+          example: "Acme Inc"
+        slug:
+          type: string
+          description: URL-friendly workspace identifier
+          example: "acme-inc"
+        description:
+          type: string
+          nullable: true
+          description: Workspace description
+          example: "Main company workspace for all our projects"
+        isActive:
+          type: boolean
+          description: Whether the workspace is active
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Workspace creation timestamp
+          example: "2024-01-15T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: "2024-01-15T10:00:00Z"
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkspaceMember'
+          description: List of workspace members
+
+    WorkspaceMember:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Member relationship ID
+          example: "clx1234567890abcdef"
+        userId:
+          type: string
+          description: User ID
+          example: "clx1234567890abcdef"
+        workspaceId:
+          type: string
+          description: Workspace ID
+          example: "clx1234567890abcdef"
+        role:
+          type: string
+          enum: [owner, admin, member]
+          description: Member role in the workspace
+          example: "owner"
+        joinedAt:
+          type: string
+          format: date-time
+          description: When the user joined the workspace
+          example: "2024-01-15T10:00:00Z"
+
+    CreateWorkspaceRequest:
+      type: object
+      required:
+        - name
+        - slug
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          description: Workspace name
+          example: "Acme Inc"
+        slug:
+          type: string
+          minLength: 2
+          maxLength: 50
+          pattern: '^[a-z0-9-]+$'
+          description: URL-friendly workspace identifier
+          example: "acme-inc"
+        description:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Workspace description
+          example: "Main company workspace"
+
+    UpdateWorkspaceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+          description: Workspace name
+          example: "Acme Inc"
+        slug:
+          type: string
+          minLength: 2
+          maxLength: 50
+          pattern: '^[a-z0-9-]+$'
+          description: URL-friendly workspace identifier
+          example: "acme-inc"
+        description:
+          type: string
+          maxLength: 500
+          nullable: true
+          description: Workspace description
+          example: "Main company workspace"
+        isActive:
+          type: boolean
+          description: Whether the workspace is active
+          example: true
+
+    AddMemberRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          description: User email to add to workspace
+          example: "user@example.com"
+        role:
+          type: string
+          enum: [owner, admin, member]
+          default: member
+          description: Role to assign to the user
+          example: "member"
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: "An error occurred"
+        error:
+          type: string
+          description: Error type
+          example: "ValidationError"
+        statusCode:
+          type: integer
+          description: HTTP status code
+          example: 400
+
+  responses:
+    BadRequestError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

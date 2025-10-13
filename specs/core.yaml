@@ -1,0 +1,59 @@
+working on: wongsa-core
+Principal: SOLID principles
+Use this the class-based pattern with BaseApiClient for the API client
+
+# Technology Stack
+
+## Frontend Stack
+- **Framework**: Next.js 15+ (App Router)
+- **Language**: TypeScript
+- **UI Library**: React 18+
+- **Styling**: Tailwind CSS v4
+- **Component Library**: shadcn/ui
+- **UI Primitives**: Radix UI
+- **Icons**: Lucide React
+- **Animations**: tw-animate-css
+- **Build Tool**: Turbopack (Next.js)
+
+## Backend Stack
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: Supabase (Prisma)
+- **ORM**: Prisma
+- **API Documentation**: Swagger/OpenAPI
+- **Validation**: Class Validator
+- **Serialization**: Class Transformer
+
+## Database
+- **Type**: supabase
+- **ORM**: Prisma
+- **Migrations**: Prisma Migrate
+- **Schema**: Prisma Schema
+
+# Naming Conventions
+## Prisma Models: `camelCase`
+```prisma
+model User {
+  firstName   String   @map("first_name")
+  createdAt   DateTime @map("created_at")
+  @@map("users")
+}
+```
+
+## Rules
+- Prisma fields: `camelCase` → Database: `snake_case`
+- Use `@map()` for field mapping
+- Table names: `snake_case`
+
+# Port Configuration
+## Development Ports
+- **Backend API**: `http://localhost:3000`
+- **Frontend**: `http://localhost:3001`
+- **Swagger Documentation**: `http://localhost:3000/api`
+
+# Auth
+- PassportJS
+- JWT
+
+# Support
+- Workspaces
