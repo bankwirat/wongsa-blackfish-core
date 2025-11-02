@@ -1,0 +1,44 @@
+{
+  "name": "@wongsa/sales-order",
+  "version": "1.0.0",
+  "description": "Sales order management module for Wongsa Core",
+  "private": true,
+  "main": "./backend/src/index.ts",
+  "types": "./backend/src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./backend/src/index.ts",
+      "default": "./backend/src/index.ts"
+    },
+    "./frontend": {
+      "types": "./frontend/src/index.ts",
+      "default": "./frontend/src/index.ts"
+    },
+    "./backend": {
+      "types": "./backend/src/index.ts",
+      "default": "./backend/src/index.ts"
+    }
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/core": "^10.0.0",
+    "@nestjs/swagger": "^7.1.17",
+    "@prisma/client": "^5.7.1",
+    "@wongsa/core-shared": "workspace:*",
+    "@wongsa/plugin-system": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next": "^15.0.0",
+    "lucide-react": "^0.545.0",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.24",
+    "@types/react": "^19.0.0"
+  }
+}
+

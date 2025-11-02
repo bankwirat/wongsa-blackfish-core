@@ -1,0 +1,23 @@
+{
+  "name": "Sales Order",
+  "version": "1.0.0",
+  "category": "sales",
+  "depends": ["core", "workspaces"],
+  "author": "Wongsa Team",
+  "description": "Sales order management module",
+  "installable": true,
+  "backend": {
+    "controllers": [
+      "./backend/src/index.ts"
+    ],
+    "services": [
+      "./backend/src/index.ts"
+    ]
+  },
+  "frontend": {
+    "plugins": [
+      "./frontend/src/index.ts"
+    ]
+  }
+}
+

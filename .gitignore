@@ -17,6 +17,19 @@ dist/
 build/
 .next/
 out/
+*.tsbuildinfo
+
+# Backend build artifacts
+core/apps/backend/dist/
+core/apps/backend/coverage/
+
+# Frontend build artifacts
+core/apps/frontend/.next/
+core/apps/frontend/out/
+core/apps/frontend/build/
+
+# Package build artifacts
+core/packages/**/dist/
 
 # Database
 *.db
@@ -103,3 +116,6 @@ Thumbs.db
 
 # Prisma
 prisma/migrations/
+
+# Turborepo
+.turbo

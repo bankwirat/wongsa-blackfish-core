@@ -1,0 +1,4 @@
+packages:
+  - 'core/apps/*'
+  - 'core/packages/@wongsa/*'
+  - 'packages/@wongsa/*'

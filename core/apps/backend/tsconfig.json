@@ -1,0 +1,25 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "types": ["node"],
+    "paths": {
+      "@/*": ["src/*"],
+      "@wongsa/*": ["../../../packages/@wongsa/*"]
+    }
+  },
+  "include": ["src/**/*", "../../../packages/@wongsa/**/backend/**/*"],
+  "exclude": ["node_modules", "dist", "test", "../../../packages/@wongsa/**/frontend/**/*"]
+}
